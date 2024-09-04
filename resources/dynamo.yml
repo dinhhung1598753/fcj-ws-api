@@ -1,0 +1,25 @@
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.dynamo.TodoTable}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: username
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: username
+            KeyType: RANGE
+        # GlobalSecondaryIndexes:
+        #   - IndexName: UsernameIndex
+        #     KeySchema:
+        #       - AttributeName: username
+        #         KeyType: HASH
+        #     Projection:
+        #       ProjectionType: ALL
+        #     BillingMode: PAY_PER_REQUEST
+        BillingMode: PAY_PER_REQUEST

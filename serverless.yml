@@ -1,0 +1,62 @@
+service: fcj-ws-api
+  
+custom:
+  base: ${self:service}-${self:provider.stage}
+  dynamo:
+    TodoTable: ${self:service}-todo-${sls:stage}
+  iam:
+    LambdaRole:
+      name: ${self:custom.base}-lambda-role
+  cognito:
+    UserPoolName: ${self:custom.base}-user-pool
+    UserPoolClient: ${self:custom.base}-user-pool-client
+    Domain: ${self:custom.base}-auth
+
+build:
+    esbuild:
+      # Enable or Disable bundling the function code and dependencies. (Default: true)
+      bundle: true
+      # Enable minifying function code. (Default: false)
+      minify: false
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-southeast-1
+  stage: dev
+  httpApi:
+    cors:
+      allowedOrigins: '*'
+      allowedHeaders: '*'
+      allowedMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      maxAge: 6000 #
+    authorizers:
+      CognitoAuthorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        issuerUrl: 
+          Fn::Sub: https://cognito-idp.${self:provider.region}.amazonaws.com/${CognitoUserPool}
+        audience:
+          - Ref: CognitoUserPoolClient
+  environment:
+    TODO_TABLE: ${self:custom.dynamo.TodoTable}
+
+
+functions:
+  createTodo: ${file(./resources/lambda/createTodo.yml)}
+  getTodos: ${file(./resources/lambda/getTodos.yml)}
+  getTodo: ${file(./resources/lambda/getTodo.yml)}
+  deleteTodo: ${file(./resources/lambda/deleteTodo.yml)}
+  updateTodo: ${file(./resources/lambda/updateTodo.yml)}
+
+resources:
+  - ${file(./resources/iam/lambdaRole.yml):resources}
+  - ${file(./resources/dynamo.yml):resources}
+  - ${file(./resources/cognito.yml):resources}
+
+

@@ -1,0 +1,57 @@
+resources: 
+  Resources:
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: ${self:custom.cognito.UserPoolName}
+        UsernameAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+        AccountRecoverySetting:
+          RecoveryMechanisms:
+            - Priority: 1
+              Name: "verified_email"
+        Schema:
+          - Name: email
+            Required: true
+    CognitoUserPoolClient:
+        Type: AWS::Cognito::UserPoolClient
+        Properties:
+          ClientName: ${self:custom.cognito.UserPoolClient}
+          UserPoolId:
+            Ref: CognitoUserPool
+          ExplicitAuthFlows:
+            - ADMIN_NO_SRP_AUTH
+          GenerateSecret: false
+          AllowedOAuthFlows:
+            - implicit
+          AllowedOAuthFlowsUserPoolClient: true
+          AllowedOAuthScopes:
+            - email
+            - openid
+          CallbackURLs:
+            - https://${cf:fcj-ws-fe-${self:provider.stage}.CloudFrontDomain}/callback  # Replace with your app's callback URL
+          LogoutURLs:
+            - https://${cf:fcj-ws-fe-${self:provider.stage}.CloudFrontDomain}/login  # Replace with your app's signout URL
+          PreventUserExistenceErrors: ENABLED
+          SupportedIdentityProviders:
+            - COGNITO
+    CognitoUserPoolDomain:
+        Type: AWS::Cognito::UserPoolDomain
+        Properties:
+          Domain: ${self:custom.cognito.Domain}
+          UserPoolId:
+            Ref: CognitoUserPool
+
+  Outputs:
+    cognitoUserPoolId:
+      Value:
+        Ref: CognitoUserPool
+    cognitoUserPoolClientId:
+      Value:
+        Ref: CognitoUserPoolClient
+    cognitoUserPoolDomain:
+      Value:
+        Ref: CognitoUserPoolDomain
+

@@ -1,0 +1,9 @@
+handler: src/getTodo/handler.getTodo
+name: ${self:custom.base}-get-todo
+role: !GetAtt LambdaRole.Arn
+events:
+  - httpApi:
+      path: /todos/{todoId}
+      method: get
+      authorizer:
+        name: CognitoAuthorizer

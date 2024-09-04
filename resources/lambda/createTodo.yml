@@ -1,0 +1,9 @@
+handler: src/createTodo/handler.createTodo
+name: ${self:custom.base}-create-todo
+role: !GetAtt LambdaRole.Arn
+events:
+  - httpApi:
+      path: /todos
+      method: post
+      authorizer:
+        name: CognitoAuthorizer

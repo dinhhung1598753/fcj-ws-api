@@ -1,0 +1,9 @@
+handler: src/deleteTodo/handler.deleteTodo
+name: ${self:custom.base}-delete-todo
+role: !GetAtt LambdaRole.Arn
+events:
+  - httpApi:
+      path: /todos/{id}
+      method: delete
+      authorizer:
+        name: CognitoAuthorizer

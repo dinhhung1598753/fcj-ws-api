@@ -1,0 +1,9 @@
+handler: src/updateTodo/handler.updateTodo
+name: ${self:custom.base}-update-todo
+role: !GetAtt LambdaRole.Arn
+events:
+  - httpApi:
+      path: /todos/{id}
+      method: put
+      authorizer:
+        name: CognitoAuthorizer
