@@ -14,12 +14,4 @@ resources:
             KeyType: HASH
           - AttributeName: username
             KeyType: RANGE
-        # GlobalSecondaryIndexes:
-        #   - IndexName: UsernameIndex
-        #     KeySchema:
-        #       - AttributeName: username
-        #         KeyType: HASH
-        #     Projection:
-        #       ProjectionType: ALL
-        #     BillingMode: PAY_PER_REQUEST
         BillingMode: PAY_PER_REQUEST

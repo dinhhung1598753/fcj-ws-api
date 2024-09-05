@@ -54,4 +54,7 @@ resources:
     cognitoUserPoolDomain:
       Value:
         Ref: CognitoUserPoolDomain
+    cognitoHostedUIUrl:
+      Value:
+        Fn::Sub: "https://${CognitoUserPoolDomain}.auth.${AWS::Region}.amazoncognito.com/login?client_id=${CognitoUserPoolClient}&response_type=token&scope=email+openid&redirect_uri=https://${cf:fcj-ws-fe-${self:provider.stage}.CloudFrontDomain}/callback"
 
